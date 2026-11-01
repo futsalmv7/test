@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Club Amigos League 2.0</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img
+          src="assets/images/club-amigos-logo.png"
+          alt="Club Amigos Logo"
+          class="brand-logo"
+        >
+        <span>
+          <strong>CLUB AMIGOS</strong>
+          <small>LEAGUE 2.0</small>
+        </span>
+      </a>
+      <span class="header-badge">OFFICIAL LEAGUE PORTAL</span>
+    </div>
+  </header>
+
+  <main class="site-main">
+
+    <section class="hero">
+      <p class="eyebrow">THE BEAUTIFUL GAME. OUR LEAGUE.</p>
+      <h1>Club Amigos League</h1>
+      <p>
+        Follow the league standings, top goal scorers,
+        match results and player achievements.
+      </p>
+    </section>
+
+    <nav class="portal-nav" aria-label="League navigation">
+      <button class="nav-btn active" data-page="standings">
+        Standings
+      </button>
+      <button class="nav-btn" data-page="golden-boot">
+        Golden Boot
+      </button>
+      <button class="nav-btn" data-page="motm">
+        MOTM
+      </button>
+      <button class="nav-btn" data-page="results">
+        Results
+      </button>
+      <button class="nav-btn" data-page="champions">
+        Champions
+      </button>
+    </nav>
+
+    <section class="portal-section" id="standingsPage">
+      <div class="section-heading">
+        <p class="eyebrow">LEAGUE TABLE</p>
+        <h2>Standings</h2>
+      </div>
+
+      <div class="period-filters">
+        <div>
+          <label for="publicView">View</label>
+          <select id="publicView">
+            <option value="month">Monthly</option>
+            <option value="season">Season</option>
+            <option value="all">All-Time</option>
+          </select>
+        </div>
+
+        <div id="publicYearField">
+          <label for="publicYear">Year</label>
+          <select id="publicYear"></select>
+        </div>
+
+        <div id="publicMonthField">
+          <label for="publicMonth">Month</label>
+          <select id="publicMonth">
+            <option value="01">January</option>
+            <option value="02">February</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
+            <option value="05">May</option>
+            <option value="06">June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <h3 id="publicStandingsTitle">Monthly Standings</h3>
+        <p id="publicStandingsMessage" class="muted">
+          Loading league standings...
+        </p>
+
+        <div class="table-scroll">
+          <table class="league-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Player</th>
+                <th>P</th>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>Goals</th>
+                <th>MOTM</th>
+                <th>Win %</th>
+                <th>Pts</th>
+              </tr>
+            </thead>
+            <tbody id="publicStandingsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    
+<section class="portal-section" id="goldenBootPage" hidden>
+  <div class="section-heading">
+    <p class="eyebrow">TOP GOAL SCORERS</p>
+    <h2>Golden Boot</h2>
+    <p class="muted">
+      The players scoring the most goals in Club Amigos League.
+    </p>
+  </div>
+
+  <div class="period-filters">
+    <div>
+      <label for="goldenBootView">View</label>
+      <select id="goldenBootView">
+        <option value="month">Monthly</option>
+        <option value="season">Season</option>
+        <option value="all">All-Time</option>
+      </select>
+    </div>
+
+    <div id="goldenBootYearField">
+      <label for="goldenBootYear">Year</label>
+      <select id="goldenBootYear"></select>
+    </div>
+
+    <div id="goldenBootMonthField">
+      <label for="goldenBootMonth">Month</label>
+      <select id="goldenBootMonth">
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="award-leader" id="goldenBootLeader" hidden></div>
+
+  <div class="content-card">
+    <h3 id="goldenBootTitle">Golden Boot Rankings</h3>
+    <p class="muted" id="goldenBootMessage">Loading...</p>
+
+    <div class="table-scroll">
+      <table class="league-table award-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Player</th>
+            <th>Played</th>
+            <th>Goals</th>
+            <th>Goals / Match</th>
+          </tr>
+        </thead>
+        <tbody id="goldenBootBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+    
+<section class="portal-section" id="motmPage" hidden>
+  <div class="section-heading">
+    <p class="eyebrow">PLAYER AWARDS</p>
+    <h2>Man of the Match</h2>
+    <p class="muted">
+      Players who have earned the most Man of the Match awards.
+    </p>
+  </div>
+
+  <div class="period-filters">
+    <div>
+      <label for="motmView">View</label>
+      <select id="motmView">
+        <option value="month">Monthly</option>
+        <option value="season">Season</option>
+        <option value="all">All-Time</option>
+      </select>
+    </div>
+
+    <div id="motmYearField">
+      <label for="motmYear">Year</label>
+      <select id="motmYear"></select>
+    </div>
+
+    <div id="motmMonthField">
+      <label for="motmMonth">Month</label>
+      <select id="motmMonth">
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="award-leader" id="motmLeader" hidden></div>
+
+  <div class="content-card">
+    <h3 id="motmTitle">MOTM Rankings</h3>
+    <p class="muted" id="motmMessage">Loading...</p>
+
+    <div class="table-scroll">
+      <table class="league-table award-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Player</th>
+            <th>Played</th>
+            <th>MOTM Awards</th>
+          </tr>
+        </thead>
+        <tbody id="motmBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- PUBLIC MATCH RESULTS -->
+<section class="portal-section" id="resultsPage" hidden>
+
+  <div class="section-heading">
+    <p class="eyebrow">MATCH HISTORY</p>
+    <h2>Match Results</h2>
+    <p class="muted">
+      Final scores, goal scorers and Man of the Match awards.
+    </p>
+  </div>
+
+  <div class="period-filters">
+
+    <div>
+      <label for="resultsView">View</label>
+      <select id="resultsView">
+        <option value="month">Monthly</option>
+        <option value="season">Season</option>
+        <option value="all">All-Time</option>
+      </select>
+    </div>
+
+    <div id="resultsYearField">
+      <label for="resultsYear">Year</label>
+      <select id="resultsYear"></select>
+    </div>
+
+    <div id="resultsMonthField">
+      <label for="resultsMonth">Month</label>
+      <select id="resultsMonth">
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+    </div>
+
+  </div>
+
+  <h3 id="resultsTitle">Monthly Results</h3>
+
+  <p id="resultsMessage" class="muted">
+    Loading match results...
+  </p>
+
+  <div id="resultsList" class="results-list"></div>
+
+</section>
+<!-- END PUBLIC MATCH RESULTS -->
+
+
+    
+<section class="portal-section" id="championsPage" hidden>
+
+  <div class="section-heading">
+    <p class="eyebrow">CLUB AMIGOS HALL OF FAME</p>
+    <h2>Monthly Champions</h2>
+    <p class="muted">
+      Follow the current monthly leader and explore
+      the league's monthly champions.
+    </p>
+  </div>
+
+  <div class="period-filters">
+
+    <div>
+      <label for="championsYear">Year</label>
+      <select id="championsYear"></select>
+    </div>
+
+    <div>
+      <label for="championsMonth">Month</label>
+      <select id="championsMonth">
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div id="championsDisplay" class="champion-display">
+    <p class="muted">Loading monthly standings...</p>
+  </div>
+
+</section>
+
+
+  </main>
+
+  <footer class="site-footer">
+    <p>© Club Amigos League 2.0</p>
+  </footer>
+
+  <script type="module" src="js/public.js"></script>
+</body>
+</html>

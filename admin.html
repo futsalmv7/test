@@ -1,0 +1,647 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+
+  <title>Club Amigos | Admin</title>
+
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <main id="loginScreen" class="login-screen">
+    <div class="login-card">
+
+      <img
+        src="assets/images/club-amigos-logo.png"
+        alt="Club Amigos"
+        class="club-logo"
+      >
+
+      <p class="eyebrow">CLUB AMIGOS</p>
+      <h1>League Manager</h1>
+      <p class="subtitle">Admin Access</p>
+
+      <form id="loginForm">
+
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Admin email"
+          autocomplete="username"
+          required
+        >
+
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button type="submit">
+          Sign In
+        </button>
+
+        <p id="loginMessage" role="status"></p>
+      </form>
+
+    </div>
+  </main>
+
+  
+<main id="dashboard" hidden>
+
+  <header class="dashboard-header">
+    <div class="brand">
+      <img
+        src="assets/images/club-amigos-logo.png"
+        alt="Club Amigos"
+        class="header-logo"
+      >
+
+      <div>
+        <p class="eyebrow">CLUB AMIGOS</p>
+        <h2>League Manager</h2>
+      </div>
+    </div>
+
+    <button id="logoutButton" class="logout-btn">
+      Logout
+    </button>
+  </header>
+
+  <div class="dashboard-content">
+
+    <section class="welcome-section">
+      <p class="eyebrow">ADMIN DASHBOARD</p>
+      <h1>League Overview</h1>
+      <p class="subtitle">
+        Manage your players, matches and league statistics.
+      </p>
+    </section>
+
+    <section class="stats-grid">
+
+      <article class="stat-card">
+        <span class="stat-icon">👥</span>
+        <h3 id="totalPlayers">—</h3>
+        <p>Total Players</p>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-icon">⚽</span>
+        <h3 id="totalMatches">—</h3>
+        <p>Match Days</p>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-icon">🥅</span>
+        <h3 id="totalGoals">—</h3>
+        <p>Goals Scored</p>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-icon">🏆</span>
+        <h3 id="activeSeason">—</h3>
+        <p>Active Season</p>
+      </article>
+
+    </section>
+
+    <section class="quick-actions">
+      <h2>Quick Actions</h2>
+
+      <div class="action-grid">
+        <button class="action-card" data-section="players">
+          <span>👤</span>
+          <strong>Manage Players</strong>
+          <small>Add and edit players</small>
+        </button>
+
+        <button class="action-card" data-section="matches">
+          <span>📅</span>
+          <strong>Match Days</strong>
+          <small>Record match results</small>
+        </button>
+
+        <button class="action-card" data-section="standings">
+          <span>🏅</span>
+          <strong>Standings</strong>
+          <small>View league rankings</small>
+        </button>
+
+
+<button class="action-card" data-section="champions-admin">
+  <span>🏆</span>
+  <strong>Monthly Champions</strong>
+  <small>Confirm monthly winners</small>
+</button>
+
+
+        <button class="action-card" data-section="settings">
+          <span>⚙️</span>
+          <strong>Settings</strong>
+          <small>Manage league seasons</small>
+        </button>
+      </div>
+    </section>
+
+    
+<section id="sectionMessage"
+         class="section-message"
+         aria-live="polite">
+  Select an option to continue.
+</section>
+
+<!-- PLAYER MANAGEMENT -->
+<section id="playersSection" class="players-section" hidden>
+
+  <div class="players-heading">
+    <div>
+      <p class="eyebrow">LEAGUE MANAGEMENT</p>
+      <h2>Players</h2>
+      <p class="subtitle">
+        Manage your Club Amigos player directory.
+      </p>
+    </div>
+
+    <button id="addPlayerButton" class="primary-btn">
+      + Add Player
+    </button>
+  </div>
+
+  <label for="playerSearch">Search players</label>
+  <input
+    type="search"
+    id="playerSearch"
+    placeholder="Search by player name..."
+  >
+
+  <p id="playerCount" class="player-count">
+    Loading players...
+  </p>
+
+  <div id="playersList" class="players-list"></div>
+
+</section>
+
+
+<!-- MATCH DAY MANAGEMENT -->
+<section id="matchesSection" class="matches-section" hidden>
+
+  <div class="players-heading">
+    <div>
+      <p class="eyebrow">LEAGUE MANAGEMENT</p>
+      <h2>Match Days</h2>
+      <p class="subtitle">
+        Create matches and assign registered players.
+      </p>
+    </div>
+
+    <button id="newMatchButton" class="primary-btn">
+      + New Match
+    </button>
+  </div>
+
+  <p id="matchesMessage" class="player-count"></p>
+
+  <div id="matchesList" class="players-list"></div>
+
+  <div id="matchEditor" class="match-editor" hidden>
+
+    <div class="modal-header">
+      <h2 id="matchEditorTitle">New Match Day</h2>
+
+      <button id="closeMatchEditor"
+              class="small-btn"
+              type="button">
+        Close
+      </button>
+    </div>
+
+    <form id="matchForm">
+
+      <label for="matchDate">Match Date</label>
+      <input id="matchDate" type="date" required>
+
+      <div class="form-group">
+  <label for="matchTime">Match Time (Optional)</label>
+  <input
+    type="time"
+    id="matchTime"
+  >
+</div>
+
+      <label for="matchVenue">Venue (optional)</label>
+      <input
+        id="matchVenue"
+        type="text"
+        maxlength="100"
+        placeholder="Football ground"
+      >
+
+
+<!-- TEAM CAPTAINS -->
+<div class="captains-section">
+  <h3>Choose Team Captains</h3>
+  <p class="subtitle">
+    Select the two captains before assigning players.
+  </p>
+
+  <div class="captains-grid">
+    <div class="captain-field">
+      <label for="captainA">Captain A</label>
+      <select id="captainA" required>
+        <option value="">Select Captain</option>
+      </select>
+      <strong id="teamNameA">Team A</strong>
+    </div>
+
+    <div class="captain-field">
+      <label for="captainB">Captain B</label>
+      <select id="captainB" required>
+        <option value="">Select Captain</option>
+      </select>
+      <strong id="teamNameB">Team B</strong>
+    </div>
+  </div>
+
+  <p id="captainMessage" class="captain-message" role="status"></p>
+</div>
+
+
+      <h3>Assign Players</h3>
+
+      <p class="subtitle">
+        Select Team A, Team B, Late, Absent or Not Selected
+        for each player.
+      </p>
+
+      <div id="matchPlayersList"></div>
+
+      <div class="match-team-summary">
+        <div>
+          <strong>Team A</strong>
+          <span id="teamACount">0 players</span>
+        </div>
+
+        <div>
+          <strong>Team B</strong>
+          <span id="teamBCount">0 players</span>
+        </div>
+
+        <div>
+          <strong>Absent</strong>
+          <span id="absentCount">0 players</span>
+        </div>
+      </div>
+
+      <p id="matchFormMessage" role="status"></p>
+
+      <button type="submit" class="primary-btn">
+        Save Draft
+      </button>
+
+    </form>
+    
+<!-- MATCH RESULT EDITOR -->
+<section id="resultEditor" class="result-editor" hidden>
+
+  <h3>Final Match Result</h3>
+  <p id="resultTeamNames" class="subtitle"></p>
+
+  <div class="result-score-grid">
+    <div>
+      <label id="resultLabelA" for="resultScoreA">Team A</label>
+      <input id="resultScoreA" type="number"
+             min="0" max="99" value="0" required>
+    </div>
+
+    <div>
+      <label id="resultLabelB" for="resultScoreB">Team B</label>
+      <input id="resultScoreB" type="number"
+             min="0" max="99" value="0" required>
+    </div>
+  </div>
+
+  <h3>Goal Scorers</h3>
+  <p class="subtitle">
+    Enter how many goals each player scored.
+  </p>
+
+  <div id="resultScorers"></div>
+
+  <p id="resultGoalTotals" class="subtitle"></p>
+
+  <label for="resultMotm">Man of the Match</label>
+  <select id="resultMotm">
+    <option value="">Select player</option>
+  </select>
+
+  <p id="resultMessage" role="status"></p>
+
+  <button id="publishResultButton"
+          type="button"
+          class="primary-btn">
+    Publish Result
+  </button>
+
+</section>
+
+  </div>
+
+</section>
+
+
+<!-- MONTHLY CHAMPIONS MANAGEMENT -->
+<section id="championsAdminSection" class="standings-section" hidden>
+
+  <div class="players-heading">
+    <div>
+      <p class="eyebrow">CLUB AMIGOS LEAGUE</p>
+      <h2>Monthly Champions</h2>
+      <p class="subtitle">
+        Review and officially confirm completed monthly winners.
+      </p>
+    </div>
+  </div>
+
+  <div class="standings-filters">
+    <div>
+      <label for="adminChampionYear">Year</label>
+      <select id="adminChampionYear"></select>
+    </div>
+
+    <div>
+      <label for="adminChampionMonth">Month</label>
+      <select id="adminChampionMonth">
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="adminChampionPreview" class="standings-winner">
+    Select a month to review its leader.
+  </div>
+
+
+<div class="champion-photo-field">
+  <label for="adminChampionPhoto">
+    Champion Photo (Imgur link) *
+  </label>
+
+  <input
+    id="adminChampionPhoto"
+    type="url"
+    placeholder="https://i.imgur.com/your-photo.jpg"
+    autocomplete="off"
+    required
+  >
+
+  <p class="subtitle">
+    Required: paste a direct Imgur image link showing
+    the monthly champion holding the trophy.
+  </p>
+
+  <img
+  id="adminChampionPhotoPreview"
+  alt="Monthly champion photo preview"
+  hidden
+>
+</div>
+
+
+  <p id="adminChampionMessage" class="subtitle" role="status"></p>
+
+  <button
+    id="finalizeChampionButton"
+    type="button"
+    class="primary-btn"
+    disabled
+  >
+    Finalize Monthly Champion
+  </button>
+
+</section>
+
+
+<!-- LEAGUE STANDINGS -->
+<section id="standingsSection" class="standings-section" hidden>
+
+  <div class="players-heading">
+    <div>
+      <p class="eyebrow">CLUB AMIGOS LEAGUE</p>
+      <h2>League Standings</h2>
+      <p class="subtitle">
+        Monthly, season and all-time player rankings.
+      </p>
+    </div>
+  </div>
+
+  <div class="standings-filters">
+    <div>
+      <label for="standingsView">View</label>
+      <select id="standingsView">
+        <option value="month">Monthly</option>
+        <option value="season">Season</option>
+        <option value="all">All-Time</option>
+      </select>
+    </div>
+
+    <div id="standingsYearField">
+      <label for="standingsYear">Year</label>
+      <select id="standingsYear"></select>
+    </div>
+
+    <div id="standingsMonthField">
+      <label for="standingsMonth">Month</label>
+      <select id="standingsMonth">
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+    </div>
+  </div>
+
+  <h3 id="standingsTitle">Monthly Standings</h3>
+  <p id="standingsMessage" class="subtitle"></p>
+
+  <div id="standingsWinner" class="standings-winner" hidden></div>
+
+  <div class="standings-table-wrap">
+    <table class="standings-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Player</th>
+          <th>Played</th>
+          <th>W</th>
+          <th>D</th>
+          <th>L</th>
+          <th>Late</th>
+          <th>Absent</th>
+          <th>Goals</th>
+          <th>MOTM</th>
+          <th>Win %</th>
+          <th>Pts</th>
+        </tr>
+      </thead>
+      <tbody id="standingsBody"></tbody>
+    </table>
+  </div>
+
+</section>
+
+
+<!-- ADD / EDIT PLAYER MODAL -->
+<div id="playerModal" class="modal-backdrop" hidden>
+  <div class="modal-card"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="playerModalTitle">
+
+    <div class="modal-header">
+      <h2 id="playerModalTitle">Add Player</h2>
+      <button
+        id="closePlayerModal"
+        type="button"
+        class="close-btn"
+        aria-label="Close">
+        ×
+      </button>
+    </div>
+
+    <form id="playerForm">
+      <input type="hidden" id="playerId">
+
+      <label for="playerName">Player Name</label>
+      <input
+        type="text"
+        id="playerName"
+        placeholder="Enter full name"
+        maxlength="80"
+        required
+      >
+
+      <label for="playerNickname">Nickname (optional)</label>
+      <input
+        type="text"
+        id="playerNickname"
+        placeholder="Name shown on player card"
+        maxlength="50"
+      >
+
+      <button type="submit" class="primary-btn">
+        Save Player
+      </button>
+
+      <p id="playerFormMessage" role="status"></p>
+    </form>
+
+  </div>
+</div>
+
+
+  </div>
+
+  <nav class="bottom-nav" aria-label="Admin navigation">
+    <button class="nav-item active" data-section="home">
+      <span>⌂</span>
+      <small>Home</small>
+    </button>
+
+    <button class="nav-item" data-section="players">
+      <span>👥</span>
+      <small>Players</small>
+    </button>
+
+    <button class="nav-item" data-section="matches">
+      <span>⚽</span>
+      <small>Matches</small>
+    </button>
+
+    <button class="nav-item" data-section="settings">
+      <span>⚙️</span>
+      <small>Settings</small>
+    </button>
+  </nav>
+
+</main>
+
+<!-- SHAREABLE MATCH RESULT CARD -->
+<div id="resultCardModal" class="result-card-modal" hidden>
+
+  <div class="result-card-toolbar">
+
+  <button
+    id="screenshotResultCard"
+    type="button"
+    class="small-btn">
+    📸 Screenshot Mode
+  </button>
+
+  <button
+    id="closeResultCard"
+    type="button"
+    class="small-btn">
+    ✕ Close
+  </button>
+
+</div>
+
+  <div id="shareableResultCard" class="shareable-result-card">
+
+    <div class="share-card-header">
+      <img
+        src="assets/images/club-amigos-logo.png"
+        alt="Club Amigos Logo"
+        class="share-card-logo"
+      >
+
+      <h2>CLUB AMIGOS LEAGUE</h2>
+      <p>OFFICIAL MATCH RESULT</p>
+    </div>
+
+    <div id="shareCardContent">
+      <!-- Match details will appear here -->
+    </div>
+
+  </div>
+
+</div>
+
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/players.js"></script>
+  <script type="module" src="js/matches.js"></script>
+  <script type="module" src="js/results.js"></script>
+  <script type="module" src="js/standings.js"></script>
+  <script type="module" src="js/champions-admin.js"></script>
+</body>
+</html>
