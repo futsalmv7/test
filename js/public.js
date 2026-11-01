@@ -614,11 +614,6 @@ if (official) {
         <div class="champion-points">
           ${Number(official.points) || 0} Points
         </div>
-
-        <p class="champion-note">
-          Officially confirmed by Club Amigos League.
-          This championship is saved in league history.
-        </p>
       </div>
     `;
     return;
