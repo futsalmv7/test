@@ -31,8 +31,12 @@ const currentYear = today.getFullYear();
 
 let publishedMatches = {};
 let playerNames = {};
+let legacyStats = {};
+
 let stopMatches = null;
 let stopPlayers = null;
+let stopLegacyStats = null;
+
 let authorized = false;
 
 const monthNames = [
@@ -108,11 +112,12 @@ function renderStandings() {
     return;
   }
 
-  const rows = calculateStandings(
+    const rows = calculateStandings(
     publishedMatches,
     view,
     year,
-    month
+    month,
+    legacyStats
   );
 
   // Use current player names when available.
@@ -210,14 +215,18 @@ yearSelect.addEventListener("change", renderStandings);
 monthSelect.addEventListener("change", renderStandings);
 
 onAuthStateChanged(auth, async user => {
-  stopMatches?.();
+    stopMatches?.();
   stopPlayers?.();
+  stopLegacyStats?.();
 
   stopMatches = null;
   stopPlayers = null;
+  stopLegacyStats = null;
+
   authorized = false;
   publishedMatches = {};
   playerNames = {};
+  legacyStats = {};
 
   section.hidden = true;
 
@@ -263,6 +272,17 @@ onAuthStateChanged(auth, async user => {
         renderStandings();
       },
       error => console.error(error)
+    );
+        stopLegacyStats = onValue(
+      ref(db, "legacyStats"),
+      snapshot => {
+        legacyStats = snapshot.val() || {};
+        renderStandings();
+      },
+      error => {
+        console.error(error);
+        message.textContent = "Unable to load historical statistics.";
+      }
     );
 
   } catch (error) {

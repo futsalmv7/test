@@ -114,6 +114,25 @@ function getLeader() {
   return rows[0] || null;
 }
 
+function getJointLeaders() {
+  const leader = getLeader();
+
+  if (!leader) return [];
+
+  const rows = calculateStandings(
+    publishedMatches,
+    "month",
+    yearSelect.value,
+    monthSelect.value
+  );
+
+  return rows.filter(row =>
+    row.points === leader.points &&
+    row.winPercentage === leader.winPercentage &&
+    row.played === leader.played
+  );
+}
+
 
 function updatePhotoPreview() {
   const url = championPhoto.value.trim();
@@ -162,6 +181,7 @@ function render() {
   const key = selectedKey();
   const saved = savedChampions[key];
   const leader = getLeader();
+  const leaders = getJointLeaders();
   const completed = isCompletedMonth(
     yearSelect.value,
     monthSelect.value
@@ -184,25 +204,48 @@ function render() {
   const details = document.createElement("p");
 
   if (saved) {
-    heading.textContent = "🏆 Official Monthly Champion";
-    details.textContent =
-      `${saved.playerName} — ${saved.points} points (${period})`;
-    message.textContent = "This month has already been finalized.";
-  } else if (!leader) {
+  const savedWinners =
+    Array.isArray(saved.champions) && saved.champions.length
+      ? saved.champions
+      : [{ playerName: saved.playerName }];
+
+  const savedNames = savedWinners
+    .map(player => player.playerName || "Champion")
+    .sort((a, b) => a.localeCompare(b))
+    .join(" & ");
+
+  heading.textContent = savedWinners.length > 1
+    ? "🏆 Official Joint Monthly Champions"
+    : "🏆 Official Monthly Champion";
+
+  details.textContent =
+    `${savedNames} — ${saved.points} points (${period})`;
+
+  message.textContent = "This month has already been finalized.";
+} else if (!leader) {
     heading.textContent = "No monthly leader";
     details.textContent = `No published matches for ${period}.`;
     message.textContent = "Nothing to finalize.";
   } else {
     heading.textContent = completed
-      ? "Monthly Leader — Ready for Confirmation"
-      : "Current Monthly Leader";
+  ? leaders.length > 1
+    ? "Joint Monthly Leaders — Awaiting Confirmation"
+    : "Monthly Leader — Ready for Confirmation"
+  : leaders.length > 1
+    ? "Current Joint Monthly Leaders"
+    : "Current Monthly Leader";
 
-    details.textContent =
-      `${leader.name} — ${leader.points} points`;
+const leaderNames = leaders
+  .map(row => row.name)
+  .sort((a, b) => a.localeCompare(b))
+  .join(" & ");
 
-    message.textContent = completed
-      ? "Review the standings carefully before finalizing."
-      : "This month is still active and cannot be finalized.";
+details.textContent =
+  `${leaderNames} — ${leader.points} points`;
+
+    message.textContent = !completed
+  ? "This month is still active and cannot be finalized."
+  : "Review the standings carefully before finalizing.";
   }
 
   preview.append(heading, details);
@@ -307,8 +350,9 @@ finalizeButton.addEventListener("click", async () => {
   }
 
   const leader = getLeader();
+const leaders = getJointLeaders();
 
-  if (!leader || savedChampions[key]) return;
+if (!leader || savedChampions[key]) return;
 
 const photoUrl = championPhoto.value.trim();
 
@@ -318,11 +362,21 @@ if (!isValidImgurPhoto(photoUrl) || !photoLoaded) {
   return;
 }
 
-  const confirmed = window.confirm(
-    `Finalize ${monthNames[Number(month) - 1]} ${year} champion:\n\n` +
-    `${leader.name} — ${leader.points} points?\n\n` +
-    `This will create the official historical record.`
-  );
+  const championNames = leaders
+  .map(player => player.name)
+  .sort((a, b) => a.localeCompare(b))
+  .join(" & ");
+
+const championLabel = leaders.length > 1
+  ? "joint champions"
+  : "champion";
+
+const confirmed = window.confirm(
+  `Finalize ${monthNames[Number(month) - 1]} ${year} ${championLabel}:\n\n` +
+  `${championNames} — ${leader.points} points?\n\n` +
+  `One shared trophy photo will be saved.\n\n` +
+  `This will create the official historical record.`
+);
 
   if (!confirmed) return;
 
@@ -344,6 +398,19 @@ if (!isValidImgurPhoto(photoUrl) || !photoLoaded) {
 const record = {
   year: Number(year),
   month,
+
+  // All champions for this month.
+  champions: leaders.map(player => ({
+    playerId: player.id,
+    playerName: player.name,
+    points: player.points,
+    played: player.played,
+    wins: player.wins,
+    draws: player.draws,
+    losses: player.losses
+  })),
+
+  // Keep these fields for compatibility with existing displays.
   playerId: leader.id,
   playerName: leader.name,
   points: leader.points,
@@ -351,7 +418,10 @@ const record = {
   wins: leader.wins,
   draws: leader.draws,
   losses: leader.losses,
-  photoUrl: photoUrl,
+
+  // ONE shared photo for the month.
+  photoUrl,
+
   finalizedBy: user.uid,
   finalizedAt: Date.now()
 };

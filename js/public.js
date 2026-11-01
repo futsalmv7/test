@@ -23,6 +23,7 @@ const today = new Date();
 const currentYear = today.getFullYear();
 
 let publishedMatches = {};
+let legacyStats = {};
 
 const months = [
   "January", "February", "March", "April",
@@ -80,11 +81,12 @@ function renderStandings() {
 
   title.textContent = `${label} Standings`;
 
-  const rows = calculateStandings(
+    const rows = calculateStandings(
     publishedMatches,
     view,
     year,
-    month
+    month,
+    legacyStats
   );
 
   message.textContent = `${rows.length} players ranked`;
@@ -569,11 +571,28 @@ function renderChampion() {
   const official = officialChampions[key];
 
   // Officially finalized champion takes priority.
-  if (official) {
-    championsDisplay.innerHTML = `
+if (official) {
+  const officialWinners =
+    Array.isArray(official.champions) && official.champions.length
+      ? official.champions
+      : [{
+          playerId: official.playerId,
+          playerName: official.playerName
+        }];
+
+  const officialNames = officialWinners
+    .map(player => player.playerName || "Champion")
+    .sort((a, b) => a.localeCompare(b))
+    .join(" & ");
+
+  const officialTitle = officialWinners.length > 1
+    ? "🏆 Official Joint Monthly Champions"
+    : "🏆 Official Monthly Champion";
+
+  championsDisplay.innerHTML = `
       <div class="champion-card">
         <span class="champion-status">
-          🏆 Official Monthly Champion
+          ${escapeHTML(officialTitle)}
         </span>
 
         ${
@@ -581,7 +600,7 @@ function renderChampion() {
     ? `<img
          class="champion-photo"
          src="${escapeHTML(official.photoUrl)}"
-         alt="${escapeHTML(official.playerName || "Monthly champion")} holding the Club Amigos trophy"
+         alt="${escapeHTML(officialNames)} holding the Club Amigos trophy"
          referrerpolicy="no-referrer"
          loading="lazy"
        >`
@@ -590,7 +609,7 @@ function renderChampion() {
 
         <p class="eyebrow">${escapeHTML(period)}</p>
 
-        <h3>${escapeHTML(official.playerName || "Champion")}</h3>
+        <h3>${escapeHTML(officialNames)}</h3>
 
         <div class="champion-points">
           ${Number(official.points) || 0} Points
@@ -625,12 +644,27 @@ function renderChampion() {
 
   const leader = rows[0];
 
+const leaders = rows.filter(row =>
+  row.points === leader.points &&
+  row.winPercentage === leader.winPercentage &&
+  row.played === leader.played
+);
+
+const leaderNames = leaders
+  .map(row => row.name)
+  .sort((a, b) => a.localeCompare(b))
+  .join(" & ");
+
   const currentPeriod =
     Number(year) === today.getFullYear() &&
     Number(month) === today.getMonth() + 1;
 
   const statusText = currentPeriod
-    ? "Current Monthly Leader"
+  ? leaders.length > 1
+    ? "Current Joint Monthly Leaders"
+    : "Current Monthly Leader"
+  : leaders.length > 1
+    ? "Month Completed — Joint Leaders Awaiting Confirmation"
     : "Month Completed — Awaiting Confirmation";
 
   const note = currentPeriod
@@ -647,7 +681,7 @@ function renderChampion() {
 
       <p class="eyebrow">${escapeHTML(period)}</p>
 
-      <h3>${escapeHTML(leader.name)}</h3>
+      <h3>${escapeHTML(leaderNames)}</h3>
 
       <div class="champion-points">
         ${leader.points} Points
@@ -712,5 +746,17 @@ renderChampion();
     console.error(error);
     message.textContent =
       "Unable to load league data. Check Firebase public read rules.";
+  }
+);
+
+// Historical league statistics for All-Time Standings.
+onValue(
+  ref(db, "legacyStats"),
+  snapshot => {
+    legacyStats = snapshot.val() || {};
+    renderStandings();
+  },
+  error => {
+    console.error("Unable to load historical statistics:", error);
   }
 );

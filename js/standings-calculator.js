@@ -7,8 +7,35 @@
   Does not write to Firebase.
 */
 
-export function calculateStandings(matches, view, year, month) {
-  const stats = new Map();
+export function calculateStandings(
+  matches,
+  view,
+  year,
+  month,
+  legacyStats = {}
+) {
+    const stats = new Map();
+
+  if (view === "all") {
+    for (const [id, legacy] of Object.entries(legacyStats || {})) {
+      if (!legacy) continue;
+
+      stats.set(id, {
+        id,
+        name: legacy.name || "Unknown",
+        played: Number(legacy.played) || 0,
+        wins: Number(legacy.wins) || 0,
+        draws: Number(legacy.draws) || 0,
+        losses: Number(legacy.losses) || 0,
+        late: Number(legacy.late) || 0,
+        absent: Number(legacy.absent) || 0,
+        goals: 0,
+        motm: 0,
+        points: Number(legacy.points) || 0,
+        winPercentage: 0
+      });
+    }
+  }
 
   for (const match of Object.values(matches || {})) {
     if (!match || match.status !== "published") continue;
